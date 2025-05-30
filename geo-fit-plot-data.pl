@@ -114,17 +114,21 @@ sub plot_activity_data {
     my @heart_rates = num_parts('heart_rate', @activity_data);
     my @timestamps = map { $_->{'timestamp'} } @activity_data;
 
-    # fix timezone in time data
+    # parse timestamp data
     my $date_parser = DateTime::Format::Strptime->new(
         pattern => "%Y-%m-%dT%H:%M:%SZ",
         time_zone => 'UTC',
     );
 
+    # get the epoch time for the first point in the time data
+    my $first_epoch_time = $date_parser->parse_datetime($timestamps[0])->epoch;
+
+    # convert timestamp data to elapsed minutes from start of activity
     my @times = map {
         my $dt = $date_parser->parse_datetime($_);
-        $dt->set_time_zone('Europe/Berlin');
-        my $time_string = $dt->strftime("%H:%M:%S");
-        $time_string;
+        my $epoch_time = $dt->epoch;
+        my $elapsed_time = ($epoch_time - $first_epoch_time)/60;
+        $elapsed_time;
     } @timestamps;
 
     # determine date from timestamp data
@@ -135,19 +139,14 @@ sub plot_activity_data {
     my $chart = Chart::Gnuplot->new(
         output => "watopia-figure-8-heart-rate.png",
         title  => "Figure 8 in Watopia on $date: heart rate over time",
-        xlabel => "Time",
+        xlabel => "Elapsed time (min)",
         ylabel => "Heart rate (bpm)",
         terminal => "png size 1024, 768",
-        timeaxis => "x",
-        xtics => {
-            labelfmt => '%H:%M',
-        },
     );
 
     my $data_set = Chart::Gnuplot::DataSet->new(
         xdata => \@times,
         ydata => \@heart_rates,
-        timefmt => "%H:%M:%S",
         style => "lines",
     );
 
