@@ -5,6 +5,7 @@ use Geo::FIT;
 use Scalar::Util qw(reftype);
 use List::Util qw(max sum);
 use Chart::Gnuplot;
+use DateTime::Format::Strptime;
 
 
 sub main {
@@ -109,11 +110,28 @@ sub show_activity_statistics {
 sub plot_activity_data {
     my @activity_data = @_;
 
+    # extract data to plot from full activity data
     my @heart_rates = num_parts('heart_rate', @activity_data);
-    my @times = map { $_->{'timestamp'} } @activity_data;
+    my @timestamps = map { $_->{'timestamp'} } @activity_data;
 
-    my $date = "2025-05-08";
+    # fix timezone in time data
+    my $date_parser = DateTime::Format::Strptime->new(
+        pattern => "%Y-%m-%dT%H:%M:%SZ",
+        time_zone => 'UTC',
+    );
 
+    my @times = map {
+        my $dt = $date_parser->parse_datetime($_);
+        $dt->set_time_zone('Europe/Berlin');
+        my $time_string = $dt->strftime("%H:%M:%S");
+        $time_string;
+    } @timestamps;
+
+    # determine date from timestamp data
+    my $dt = $date_parser->parse_datetime($timestamps[0]);
+    my $date = $dt->strftime("%Y-%m-%d");
+
+    # plot data
     my $chart = Chart::Gnuplot->new(
         output => "watopia-figure-8-heart-rate.png",
         title  => "Figure 8 in Watopia on $date: heart rate over time",
@@ -129,7 +147,7 @@ sub plot_activity_data {
     my $data_set = Chart::Gnuplot::DataSet->new(
         xdata => \@times,
         ydata => \@heart_rates,
-        timefmt => "%Y-%m-%dT%H:%M:%SZ",
+        timefmt => "%H:%M:%S",
         style => "lines",
     );
 
