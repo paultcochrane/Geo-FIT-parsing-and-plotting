@@ -113,6 +113,7 @@ sub plot_activity_data {
     # extract data to plot from full activity data
     my @heart_rates = num_parts('heart_rate', @activity_data);
     my @timestamps = map { $_->{'timestamp'} } @activity_data;
+    my @altitudes = num_parts('altitude', @activity_data);
 
     # parse timestamp data
     my $date_parser = DateTime::Format::Strptime->new(
@@ -137,20 +138,35 @@ sub plot_activity_data {
 
     # plot data
     my $chart = Chart::Gnuplot->new(
-        output => "watopia-figure-8-heart-rate.png",
-        title  => "Figure 8 in Watopia on $date: heart rate over time",
+        output => "watopia-figure-8-heart-rate-and-altitude.png",
+        title  => "Figure 8 in Watopia on $date: heart rate and altitude over time",
         xlabel => "Elapsed time (min)",
         ylabel => "Heart rate (bpm)",
         terminal => "png size 1024, 768",
+        xtics => {
+            incr => 5,
+        },
+        y2label => 'Altitude (m)',
+        y2range => [-10, 70],
+        y2tics => {
+            incr => 10,
+        },
     );
 
-    my $data_set = Chart::Gnuplot::DataSet->new(
+    my $heart_rate_ds = Chart::Gnuplot::DataSet->new(
         xdata => \@times,
         ydata => \@heart_rates,
         style => "lines",
     );
 
-    $chart->plot2d($data_set);
+    my $altitude_ds = Chart::Gnuplot::DataSet->new(
+        xdata => \@times,
+        ydata => \@altitudes,
+        style => "boxes",
+        axes => "x1y2",
+    );
+
+    $chart->plot2d($altitude_ds, $heart_rate_ds);
 }
 
 main();
