@@ -21,7 +21,7 @@ sub BUILD {
 
     die "Require fit_file arg" unless exists $args->{fit_file};
 
-    @{$self->{_raw_data}} = $self->extract_activity_data;
+    $self->extract_activity_data;
 }
 
 has _raw_data => (
@@ -78,7 +78,7 @@ sub extract_activity_data {
 
     $fit->close;
 
-    return @activity_data;
+    @{$self->{_raw_data}} = @activity_data;
 }
 
 sub field_names {
