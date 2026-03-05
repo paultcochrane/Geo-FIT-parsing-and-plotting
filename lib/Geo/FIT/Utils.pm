@@ -55,6 +55,14 @@ sub extract_activity_data {
     return @activity_data;
 }
 
+sub get_available_fields {
+    my @activity_data = @_;
+
+    my @field_names = sort keys %{$activity_data[0]};
+
+    return @field_names
+}
+
 # extract and return the numerical parts of an array of FIT data values
 sub num_parts {
     my $field_name = shift;
@@ -184,6 +192,7 @@ sub get_date {
 
 our @EXPORT_OK = qw(
     extract_activity_data
+    get_available_fields
     show_activity_statistics
     plot_activity_data
     get_time_data
