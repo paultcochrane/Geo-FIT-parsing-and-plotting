@@ -226,11 +226,11 @@ sub get_elapsed_time {
     return @times;
 }
 
-sub get_date {
-    my @activity_data = @_;
+sub date {
+    my $self = shift;
 
     # determine date from timestamp data
-    my @timestamps = map { $_->{'timestamp'} } @activity_data;
+    my @timestamps = map { $_->{'timestamp'} } $self->raw_data;
     my $dt = $date_parser->parse_datetime($timestamps[0]);
     my $date = $dt->strftime("%Y-%m-%d");
 

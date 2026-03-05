@@ -25,6 +25,9 @@ my @expected_field_names = qw(
 );
 is_deeply(\@field_names, \@expected_field_names,"all non-dummy field names returned");
 
+my $date = $activity->date;
+
+is $date, "2025-05-08", "date read from FIT data correctly";
 
 done_testing;
 
