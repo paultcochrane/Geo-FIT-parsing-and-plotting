@@ -245,8 +245,10 @@ our @EXPORT_OK = qw(
     show_activity_statistics
     plot_activity_data
     get_elapsed_time
+    get_date
     num_parts
     get_field_data
+    avg
 );
 
 1;
