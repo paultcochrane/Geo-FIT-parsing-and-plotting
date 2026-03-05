@@ -34,6 +34,9 @@ sub raw_data {
     return @{$self->_raw_data};
 }
 
+has manufacturer_name => (
+    is => "ro",
+);
 
 our $date_parser = DateTime::Format::Strptime->new(
     pattern => "%Y-%m-%dT%H:%M:%SZ",
@@ -62,7 +65,21 @@ sub extract_activity_data {
         return \%event_data;
     };
 
+    my $file_id_callback = sub {
+        my ( $self, $descriptor, $values ) = @_;
+        my $manufacturer_name = $self->field_value( 'manufacturer', $descriptor, $values );
+
+        # Return a scalar ref to distinguish a returned field value from a
+        # successful callback call, which returns 1.  This way we can
+        # capture the field value in the code which calls ->fetch() and
+        # distinguish it from the scalar success value, i.e. 1.
+        return \$manufacturer_name;
+    };
+
+    # register callbacks with fit object
     $fit->data_message_callback_by_name('record', $record_callback ) or die $fit->error;
+    $fit->data_message_callback_by_name( 'file_id', $file_id_callback )
+      or die $fit->error;
 
     my @header_things = $fit->fetch_header;
 
@@ -73,6 +90,10 @@ sub extract_activity_data {
         my $reftype = reftype $event_data;
         if (defined $reftype && $reftype eq 'HASH' && defined %$event_data{'timestamp'}) {
             push @activity_data, $event_data;
+        }
+
+        if (defined $reftype && $reftype eq 'SCALAR' && !$self->manufacturer_name) {
+            $self->{manufacturer_name} = ${$event_data};
         }
     } while ( $event_data );
 
@@ -87,44 +108,6 @@ sub field_names {
     my @field_names = sort keys %{$self->{_raw_data}[0]};
 
     return @field_names
-}
-
-sub get_manufacturer {
-    my $fit_file = shift;
-
-    my $fit = Geo::FIT->new();
-    $fit->file( $fit_file );
-    $fit->open or die $fit->error;
-
-    my $file_id_callback = sub {
-        my ( $self, $descriptor, $values ) = @_;
-        my $manufacturer_name = $self->field_value( 'manufacturer', $descriptor, $values );
-
-        # Return a scalar ref to distinguish a returned field value from a
-        # successful callback call, which returns 1.  This way we can
-        # capture the field value in the code which calls ->fetch() and
-        # distinguish it from the scalar success value, i.e. 1.
-        return \$manufacturer_name;
-    };
-
-    $fit->data_message_callback_by_name( 'file_id', $file_id_callback )
-      or die $fit->error;
-
-    my @header_things = $fit->fetch_header;
-
-    my $event_data;
-    my $manufacturer_name;
-    do {
-        $event_data = $fit->fetch;
-        my $reftype = reftype $event_data;
-        if (defined $reftype && $reftype eq 'SCALAR') {
-            $manufacturer_name = ${$event_data};
-        }
-    } while ( !$manufacturer_name );
-
-    $fit->close;
-
-    return $manufacturer_name;
 }
 
 # extract and return the numerical parts of an array of FIT data values

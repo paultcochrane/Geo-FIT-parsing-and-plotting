@@ -11,6 +11,8 @@ my $activity = Geo::FIT::Utils->new(
 
 is $activity->fit_file, "2025-05-08-07-58-33.fit", "fit_file attr sets value";
 
+is $activity->manufacturer_name, "zwift", "manufacturer name read from FIT file";
+
 my @raw_data = $activity->raw_data;
 
 is scalar @raw_data, 3273, "all raw data fetched";
@@ -22,6 +24,7 @@ my @expected_field_names = qw(
     position_lat position_long power speed timestamp
 );
 is_deeply(\@field_names, \@expected_field_names,"all non-dummy field names returned");
+
 
 done_testing;
 
