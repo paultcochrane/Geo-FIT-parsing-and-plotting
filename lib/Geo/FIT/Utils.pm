@@ -111,11 +111,10 @@ sub field_names {
 }
 
 # extract and return the data for the given field name
-sub get_field_data {
-    my $field_name = shift;
-    my @activity_data = @_;
+sub field_data_for_name {
+    my ($self, $field_name) = @_;
 
-    return map { (split ' ', $_->{$field_name})[0] } @activity_data;
+    return map { (split ' ', $_->{$field_name})[0] } $self->raw_data;
 }
 
 # return the average of an array of numbers
