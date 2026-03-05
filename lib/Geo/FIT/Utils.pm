@@ -16,16 +16,22 @@ has fit_file => (
     is => "ro",
 );
 
-has raw_data => (
-    is => "ro",
-);
-
 sub BUILD {
     my ($self, $args) = @_;
 
     die "Require fit_file arg" unless exists $args->{fit_file};
 
-    @{$self->{raw_data}} = $self->extract_activity_data;
+    @{$self->{_raw_data}} = $self->extract_activity_data;
+}
+
+has _raw_data => (
+    is => "ro",
+);
+
+sub raw_data {
+    my $self = shift;
+
+    return @{$self->_raw_data};
 }
 
 
