@@ -3,6 +3,7 @@ package Geo::FIT::Utils;
 use strict;
 use warnings;
 
+use Moo;
 use Exporter 5.57 'import';
 use Geo::FIT;
 use Scalar::Util qw(reftype);
@@ -11,16 +12,33 @@ use Chart::Gnuplot;
 use DateTime::Format::Strptime;
 
 
+has fit_file => (
+    is => "ro",
+);
+
+has raw_data => (
+    is => "ro",
+);
+
+sub BUILD {
+    my ($self, $args) = @_;
+
+    die "Require fit_file arg" unless exists $args->{fit_file};
+
+    @{$self->{raw_data}} = $self->extract_activity_data;
+}
+
+
 our $date_parser = DateTime::Format::Strptime->new(
     pattern => "%Y-%m-%dT%H:%M:%SZ",
     time_zone => 'UTC',
 );
 
 sub extract_activity_data {
-    my $fit_file = shift;
+    my $self = shift;
 
     my $fit = Geo::FIT->new();
-    $fit->file( $fit_file );
+    $fit->file( $self->fit_file );
     $fit->open or die $fit->error;
 
     my $record_callback = sub {
