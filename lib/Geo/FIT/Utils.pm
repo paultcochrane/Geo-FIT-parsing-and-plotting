@@ -110,15 +110,7 @@ sub field_names {
     return @field_names
 }
 
-# extract and return the numerical parts of an array of FIT data values
-sub num_parts {
-    my $field_name = shift;
-    my @activity_data = @_;
-
-    return map { (split ' ', $_->{$field_name})[0] } @activity_data;
-}
-
-# alternate name for num_parts()
+# extract and return the data for the given field name
 sub get_field_data {
     my $field_name = shift;
     my @activity_data = @_;
@@ -144,7 +136,7 @@ sub show_activity_statistics {
     my $total_distance = $total_distance_m/1000;
     print "Total distance: $total_distance km\n";
 
-    my @speeds = num_parts('speed', @activity_data);
+    my @speeds = get_field_data('speed', @activity_data);
     my $maximum_speed = max @speeds;
     my $maximum_speed_km = $maximum_speed*3.6;
     print "Maximum speed: $maximum_speed m/s = $maximum_speed_km km/h\n";
@@ -154,7 +146,7 @@ sub show_activity_statistics {
     $average_speed = sprintf("%0.2f", $average_speed);
     print "Average speed: $average_speed m/s = $average_speed_km km/h\n";
 
-    my @powers = num_parts('power', @activity_data);
+    my @powers = get_field_data('power', @activity_data);
     my $maximum_power = max @powers;
     print "Maximum power: $maximum_power W\n";
 
@@ -162,7 +154,7 @@ sub show_activity_statistics {
     $average_power = sprintf("%0.2f", $average_power);
     print "Average power: $average_power W\n";
 
-    my @heart_rates = num_parts('heart_rate', @activity_data);
+    my @heart_rates = get_field_data('heart_rate', @activity_data);
     my $maximum_heart_rate = max @heart_rates;
     print "Maximum heart rate: $maximum_heart_rate bpm\n";
 
@@ -176,8 +168,8 @@ sub plot_activity_data {
 
     # extract data to plot from full activity data
     my @times = get_elapsed_time(@activity_data);
-    my @heart_rates = num_parts('heart_rate', @activity_data);
-    my @powers = num_parts('power', @activity_data);
+    my @heart_rates = get_field_data('heart_rate', @activity_data);
+    my @powers = get_field_data('power', @activity_data);
 
     # plot data
     my $date = get_date(@activity_data);
@@ -252,7 +244,6 @@ our @EXPORT_OK = qw(
     plot_activity_data
     get_elapsed_time
     get_date
-    num_parts
     get_field_data
     avg
 );
