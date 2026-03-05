@@ -15,6 +15,14 @@ my @raw_data = $activity->raw_data;
 
 is scalar @raw_data, 3273, "all raw data fetched";
 
+my @field_names = $activity->field_names;
+
+my @expected_field_names = qw(
+    altitude cadence distance heart_rate
+    position_lat position_long power speed timestamp
+);
+is_deeply(\@field_names, \@expected_field_names,"all non-dummy field names returned");
+
 done_testing;
 
 # vim: expandtab shiftwidth=4
