@@ -17,8 +17,10 @@ our $date_parser = DateTime::Format::Strptime->new(
 );
 
 sub extract_activity_data {
+    my $fit_file = shift;
+
     my $fit = Geo::FIT->new();
-    $fit->file( "2025-05-08-07-58-33.fit" );
+    $fit->file( $fit_file );
     $fit->open or die $fit->error;
 
     my $record_callback = sub {
