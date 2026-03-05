@@ -110,8 +110,8 @@ sub field_names {
     return @field_names
 }
 
-# extract and return the data for the given field name
-sub field_data_for_name {
+# extract and return the data from the given field name
+sub field_data_from_name {
     my ($self, $field_name) = @_;
 
     return map { (split ' ', $_->{$field_name})[0] } $self->raw_data;

@@ -35,11 +35,11 @@ is scalar @elapsed_times, 3273, "all elapsed time data returned";
 is $elapsed_times[0], 0, "first elapsed time value correct";
 is $elapsed_times[-1], 54.5333333333333, "last elapsed time value correct";
 
-my @timestamps = $activity->field_data_for_name("timestamp");
+my @timestamps = $activity->field_data_from_name("timestamp");
 my $last_timestamp = $timestamps[-1];
-my @latitudes = $activity->field_data_for_name("position_lat");
+my @latitudes = $activity->field_data_from_name("position_lat");
 my $last_latitude = $latitudes[-1];
-my @longitudes = $activity->field_data_for_name("position_long");
+my @longitudes = $activity->field_data_from_name("position_long");
 my $last_longitude = $longitudes[-1];
 
 is $last_timestamp, "2025-05-08T06:53:17Z", "final timestamp correct";
