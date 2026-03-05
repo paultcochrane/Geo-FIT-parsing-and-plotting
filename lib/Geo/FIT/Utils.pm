@@ -166,7 +166,7 @@ sub plot_activity_data {
     my @activity_data = @_;
 
     # extract data to plot from full activity data
-    my @times = get_time_data(@activity_data);
+    my @times = get_elapsed_time(@activity_data);
     my @heart_rates = num_parts('heart_rate', @activity_data);
     my @powers = num_parts('power', @activity_data);
 
@@ -207,7 +207,7 @@ sub plot_activity_data {
     $chart->plot2d($power_ds, $heart_rate_ds);
 }
 
-sub get_time_data {
+sub get_elapsed_time {
     my @activity_data = @_;
 
     # get the epoch time for the first point in the time data
@@ -242,7 +242,7 @@ our @EXPORT_OK = qw(
     get_available_fields
     show_activity_statistics
     plot_activity_data
-    get_time_data
+    get_elapsed_time
     num_parts
     get_field_data
 );
