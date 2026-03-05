@@ -238,12 +238,9 @@ sub date {
 }
 
 our @EXPORT_OK = qw(
-    extract_activity_data
-    get_manufacturer
     show_activity_statistics
     plot_activity_data
     get_elapsed_time
-    get_date
     get_field_data
     avg
 );
