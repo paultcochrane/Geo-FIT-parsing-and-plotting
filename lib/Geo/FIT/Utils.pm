@@ -208,11 +208,11 @@ sub plot_activity_data {
     $chart->plot2d($power_ds, $heart_rate_ds);
 }
 
-sub get_elapsed_time {
-    my @activity_data = @_;
+sub elapsed_times {
+    my $self = shift;
 
     # get the epoch time for the first point in the time data
-    my @timestamps = map { $_->{'timestamp'} } @activity_data;
+    my @timestamps = map { $_->{'timestamp'} } $self->raw_data;
     my $first_epoch_time = $date_parser->parse_datetime($timestamps[0])->epoch;
 
     # convert timestamp data to elapsed minutes from start of activity
@@ -240,7 +240,6 @@ sub date {
 our @EXPORT_OK = qw(
     show_activity_statistics
     plot_activity_data
-    get_elapsed_time
     get_field_data
     avg
 );

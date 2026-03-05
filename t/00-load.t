@@ -29,6 +29,12 @@ my $date = $activity->date;
 
 is $date, "2025-05-08", "date read from FIT data correctly";
 
+my @elapsed_times = $activity->elapsed_times;
+
+is scalar @elapsed_times, 3273, "all elapsed time data returned";
+is $elapsed_times[0], 0, "first elapsed time value correct";
+is $elapsed_times[-1], 54.5333333333333, "last elapsed time value correct";
+
 done_testing;
 
 # vim: expandtab shiftwidth=4
