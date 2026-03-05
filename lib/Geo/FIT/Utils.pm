@@ -109,6 +109,14 @@ sub num_parts {
     return map { (split ' ', $_->{$field_name})[0] } @activity_data;
 }
 
+# alternate name for num_parts()
+sub get_field_data {
+    my $field_name = shift;
+    my @activity_data = @_;
+
+    return map { (split ' ', $_->{$field_name})[0] } @activity_data;
+}
+
 # return the average of an array of numbers
 sub avg {
     my @array = @_;
@@ -236,6 +244,7 @@ our @EXPORT_OK = qw(
     plot_activity_data
     get_time_data
     num_parts
+    get_field_data
 );
 
 1;
