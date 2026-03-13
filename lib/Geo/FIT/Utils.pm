@@ -163,15 +163,15 @@ sub show_activity_statistics {
 }
 
 sub plot_activity_data {
-    my @activity_data = @_;
+    my $self = shift;
 
     # extract data to plot from full activity data
-    my @times = get_elapsed_time(@activity_data);
-    my @heart_rates = get_field_data('heart_rate', @activity_data);
-    my @powers = get_field_data('power', @activity_data);
+    my @times = $self->elapsed_times;
+    my @heart_rates = $self->field_data_from_name('heart_rate');
+    my @powers = $self->field_data_from_name('power');
 
     # plot data
-    my $date = get_date(@activity_data);
+    my $date = $self->date;
     my $chart = Chart::Gnuplot->new(
         output => "watopia-figure-8-heart-rate-and-power.png",
         title  => "Figure 8 in Watopia on $date: heart rate and power over time",
