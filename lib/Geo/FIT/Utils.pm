@@ -114,7 +114,21 @@ sub field_names {
 sub field_data_from_name {
     my ($self, $field_name) = @_;
 
-    return map { (split ' ', $_->{$field_name})[0] } $self->raw_data;
+    my @field_data;
+    for my $element ($self->raw_data) {
+        my $full_field_value = $element->{$field_name};
+        my $value;
+        if (!(defined $full_field_value)) {
+            $value = $field_data[-1];
+        }
+        else {
+            $value = (split ' ', $full_field_value)[0];
+        }
+
+        push @field_data, $value;
+    }
+
+    return @field_data;
 }
 
 # return the average of an array of numbers
